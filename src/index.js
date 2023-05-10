@@ -3,6 +3,10 @@ import debounce from 'lodash.debounce';
 import Notiflix from 'notiflix';
 import axios from 'axios';
 
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
+
+
 const searchFormEl = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
 const loadMoreBtn = document.getElementById('load-more');
@@ -69,16 +73,30 @@ async function renderGallery() {
         `)
  .join('');  
  galleryEl.innerHTML += imagesHTML;
+ new SimpleLightbox('.gallery a', { });
 }
     
 async function createPage() {
-    // galleryEl.innerHTML=  ""
+    
+    galleryEl.innerHTML=  ""
     const newImages = await fetchImages();
     Notiflix.Notify.success(`Hooray! We found ${newImages.totalHits} images.`);
     renderGallery();
+    
   }
 
-  searchFormEl.addEventListener('input', debounce(createPage),DEBOUNCE_DELAY );
- 
 
+  searchFormEl.addEventListener('input', (createPage) );
+ 
+async function nextPage () {
+    page ++;
+    const newImages = await fetchImages();
+    if (page > newImages.totalHits/ perPage + 1 ) {
+        Notiflix.Notify.info(
+            "We're sorry, but you've reached the end of search results."
+          );
+    }
+};
+
+loadMoreBtn.addEventListener('click', nextPage)
 
