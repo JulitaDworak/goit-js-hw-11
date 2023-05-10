@@ -1,15 +1,33 @@
 <!DOCTYPE html>
-<html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Page title</title>
-    <link rel="stylesheet" href="./sass/index.scss" />
-    <script type="module" src="./index.js"></script>
-  </head>
-  <body>
-    <p> go it hw 11 - let`s go!</p>
-    <!-- ❗️❗️❗️ Add partials like so for every page -->
-    <include src="./partials/example.html"></include>
-  </body>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./css/styles.css">
+  <title>Document</title>
+</head>
+<body>
+  <div class="finder">
+    <form class="search-form" id="search-form">
+      <input
+      id="searchInput"
+        type="text"
+        name="searchQuery"
+        autocomplete="off"
+        placeholder="Search images..."
+      />
+      <button id= "searchBtn" type="submit">Search</button>
+    </form>
+    
+  </div>
+
+<div class="gallery">
+  <!-- Obraz karty -->
+  </div>
+
+  <button type="button" id="load" class="load-more is-hidden" >Load more</button>
+
+    <script src="index.js" type="module"></script>
+</body>
 </html>
