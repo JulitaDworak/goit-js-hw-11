@@ -12,14 +12,11 @@ const searchBtn = document.getElementById('searchBtn');
 const loadMoreBtn = document.getElementById('load-more');
 const galleryEl = document.querySelector('.gallery');
 const DEBOUNCE_DELAY = 2000;
-// import { fetchImages } from './fetchImages';
-// import { renderGallery } from './renderGallery';
 
 const BASE_API_URL = 'https://pixabay.com/api';
 const KEY = '35951390-f6c6ef4470c78e55c6c9cf8e4';
-const page = 1;
-// let query = '';
-const perPage = 10;
+let page = 1;
+let perPage = 10;
 
 const queryParams = new URLSearchParams({
   image_type: 'photo',
@@ -29,6 +26,7 @@ const queryParams = new URLSearchParams({
   per_page: perPage,
 });
 
+loadMoreBtn.style.visibility = "hidden"
 
 async function fetchImages() {
   try {
@@ -77,16 +75,22 @@ async function renderGallery() {
 }
     
 async function createPage() {
-    
+     
     galleryEl.innerHTML=  ""
     const newImages = await fetchImages();
     Notiflix.Notify.success(`Hooray! We found ${newImages.totalHits} images.`);
-    renderGallery();
-    
+    await renderGallery();
+    loadMoreBtn.style.visibility = "visible"
   }
 
 
-  searchFormEl.addEventListener('input', (createPage) );
+  // searchFormEl.addEventListener('input', (createPage) );
+
+searchBtn.addEventListener('click', async ()=> {
+  searchFormEl.value =""
+  await createPage()
+})
+
  
 async function nextPage () {
     page ++;
@@ -98,5 +102,9 @@ async function nextPage () {
     }
 };
 
-loadMoreBtn.addEventListener('click', nextPage)
+// loadMoreBtn.addEventListener('click', nextPage)
+
+loadMoreBtn.addEventListener('click' , async () => {
+  await nextPage()
+})
 
