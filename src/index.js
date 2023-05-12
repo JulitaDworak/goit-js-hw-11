@@ -16,7 +16,9 @@ const DEBOUNCE_DELAY = 2000;
 const BASE_API_URL = 'https://pixabay.com/api';
 const KEY = '35951390-f6c6ef4470c78e55c6c9cf8e4';
 let page = 1;
-let perPage = 10;
+const perPage = 30;
+let totalPages = 0
+let query =''
 
 const queryParams = new URLSearchParams({
   image_type: 'photo',
@@ -30,9 +32,7 @@ loadMoreBtn.style.visibility = "hidden"
 
 async function fetchImages() {
   try {
-    
-    const query = searchFormEl.value;
-
+    query = searchFormEl.value;
     const response = await axios.get(
       `${BASE_API_URL}?key=${KEY}&q=${query}&${queryParams}`
     );
@@ -74,37 +74,50 @@ async function renderGallery() {
  new SimpleLightbox('.gallery a', { });
 }
     
-async function createPage() {
+// async function createPage() {
      
-    galleryEl.innerHTML=  ""
+//   await renderGallery();
+//     galleryEl.innerHTML=  ""
+//     const newImages = await fetchImages();
+//     Notiflix.Notify.success(`Hooray! We found ${newImages.totalHits} images.`);
+//     loadMoreBtn.style.visibility = "visible"
+//   }
+  async function createPage() {
     const newImages = await fetchImages();
     Notiflix.Notify.success(`Hooray! We found ${newImages.totalHits} images.`);
-    await renderGallery();
+    totalPages = newImages.totalHits/ perPage
+    galleryEl.innerHTML=  ""
     loadMoreBtn.style.visibility = "visible"
+    newImages.hits.forEach(image => renderGallery(image))
+    // console.log(totalPages);
+    // console.log(newImages.totalHits);
   }
+  
+function createNewGallery (e) {
+  e.preventDefault()
+  query = searchFormEl.value;
+  page = 1;
+  totalPages = 0;
+  galleryEl.innerHTML = '';
+  loadMoreBtn.style.visibility = "visible";
+  createPage()
+
+}
+
+searchBtn.addEventListener('click', createNewGallery)
 
 
-  // searchFormEl.addEventListener('input', (createPage) );
-
-searchBtn.addEventListener('click', async ()=> {
-  searchFormEl.value =""
-  await createPage()
-})
-
- 
 async function nextPage () {
-    page ++;
-    const newImages = await fetchImages();
-    if (page > newImages.totalHits/ perPage + 1 ) {
-        Notiflix.Notify.info(
-            "We're sorry, but you've reached the end of search results."
-          );
-    }
+  page ++;
+  const newImages = await fetchImages();
+  newImages.hits.forEach(image => renderGallery(image))
+  if (page > newImages.totalHits/ perPage + 1 ) {
+      Notiflix.Notify.info(
+          "We're sorry, but you've reached the end of search results."
+        );
+  }
 };
-
-// loadMoreBtn.addEventListener('click', nextPage)
 
 loadMoreBtn.addEventListener('click' , async () => {
   await nextPage()
 })
-
