@@ -13,7 +13,7 @@ const perPage = 5;
 let page = 1;
 let totalPages = 0
 let query =''
-let newImages =''
+
 
 
 const BASE_API_URL = 'https://pixabay.com/api';
@@ -80,7 +80,7 @@ async function createPage() {
     const newImages = await fetchImages();
     Notiflix.Notify.success(`Hooray! We found ${newImages.totalHits} images.`);
     totalPages = newImages.totalHits / perPage
-    newImages.hits.forEach(image => renderGallery(image))
+    newImages.hits.forEach(image => renderGallery(galleryEl, loadMoreBtn, image))
 
 }
 
@@ -91,11 +91,12 @@ async function nextPage () {
   try{
         if(page > totalPages) {
         throw new Error(error)}
-        newImages.hits.forEach(image => renderGallery(image))
+        newImages.hits.forEach(image => renderGallery(galleryEl, loadMoreBtn, image ))
         } catch {
         Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.")}
     }
 
+    console.log(nextPage());
 
 async function createNewGallery (e) {
   e.preventDefault()
@@ -109,4 +110,4 @@ async function createNewGallery (e) {
 
 searchBtn.addEventListener('click', createNewGallery)
 
-loadMoreBtn.addEventListener('click', ()=> nextPage())
+loadMoreBtn.addEventListener('click', ()=> nextPage( ))
