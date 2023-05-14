@@ -9,7 +9,7 @@ const searchFormEl = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
 const loadMoreBtn = document.getElementById('load-more');
 const galleryEl = document.querySelector('.gallery');
-const perPage = 5;
+const perPage = 40;
 let page = 1;
 let totalPages = 0
 let query =''
@@ -18,26 +18,26 @@ let query =''
 
 const BASE_API_URL = 'https://pixabay.com/api';
 const KEY = '35951390-f6c6ef4470c78e55c6c9cf8e4';
-const queryParams = new URLSearchParams({
-  image_type: 'photo',
-  orientation: 'horizontal',
-  safesearch: true,
-  page: page,
-  per_page: perPage,
-});
 
 
+loadMoreBtn.style.visibility = "hidden";
 
 // funkcja, która pobiera dane  z serwera
 async function fetchImages() {
   try {
     query = searchFormEl.value;
+    const queryParams = new URLSearchParams({
+        image_type: 'photo',
+        orientation: 'horizontal',
+        safesearch: true,
+        page: page,
+        per_page: perPage,
+      });
     const response = await axios.get(
       `${BASE_API_URL}?key=${KEY}&q=${query}&${queryParams}`
     );
-    if (response.data.hits.length === 0) 
-     throw new Error();
-     return response.data
+    if (response.data.hits.length === 0) throw new Error();
+     return response.data;
   } catch (error) {
     Notiflix.Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
@@ -48,9 +48,8 @@ async function fetchImages() {
 
 
 // funkcja która wyswietla dane na stronie
-async function renderGallery() {
-  const newImages = await fetchImages();
-  const imagesHTML = await newImages.hits
+async function renderGallery(images) {
+  const imagesHTML = images
     .map(image => ` <div class="photo-card">
     <a href="${image.largeImageURL}">
   <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" />
@@ -71,8 +70,9 @@ async function renderGallery() {
 </div>
         `)
  .join('');  
- galleryEl.innerHTML = imagesHTML;
- new SimpleLightbox('.gallery a', { });
+
+ galleryEl.insertAdjacentHTML('beforeend', imagesHTML)
+ new SimpleLightbox('.gallery a', {});
 }
 
 // funkcja która utworzy nową stronę 
@@ -80,23 +80,22 @@ async function createPage() {
     const newImages = await fetchImages();
     Notiflix.Notify.success(`Hooray! We found ${newImages.totalHits} images.`);
     totalPages = newImages.totalHits / perPage
-    newImages.hits.forEach(image => renderGallery(galleryEl, loadMoreBtn, image))
-
+renderGallery(newImages.hits)
 }
 
 // funkcja, która umożliwa załadowanie kolejnych stron
 async function nextPage () {
-    page ++;
+    ++page;
     const newImages = await fetchImages()
   try{
         if(page > totalPages) {
         throw new Error(error)}
-        newImages.hits.forEach(image => renderGallery(galleryEl, loadMoreBtn, image ))
+        console.log('render');
+        renderGallery(newImages.hits)
         } catch {
-        Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.")}
+        Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.")
     }
-
-    console.log(nextPage());
+    }
 
 async function createNewGallery (e) {
   e.preventDefault()
