@@ -37,7 +37,7 @@ async function fetchImages() {
       `${BASE_API_URL}?key=${KEY}&q=${query}&${queryParams}`
     );
     if (response.data.hits.length === 0) throw new Error(); 
-    loadMoreBtn.style.visibility = "hidden";
+    
      return response.data;
   } catch (error) {
     Notiflix.Notify.failure(
