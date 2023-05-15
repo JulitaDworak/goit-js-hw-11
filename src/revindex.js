@@ -36,12 +36,14 @@ async function fetchImages() {
     const response = await axios.get(
       `${BASE_API_URL}?key=${KEY}&q=${query}&${queryParams}`
     );
-    if (response.data.hits.length === 0) throw new Error();
+    if (response.data.hits.length === 0) throw new Error(); 
+    loadMoreBtn.style.visibility = "hidden";
      return response.data;
   } catch (error) {
     Notiflix.Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
+      loadMoreBtn.style.visibility = "hidden";
   }
 }
 
